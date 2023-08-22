@@ -16,7 +16,6 @@
 
                     {{ __('You are logged in!') }}
                 </div>
-                <h1>Ciao SEI LOGGATO</h1>
             </div>
         </div>
     </div>
