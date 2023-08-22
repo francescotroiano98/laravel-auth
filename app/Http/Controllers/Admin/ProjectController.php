@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Project;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Str;
+
 class ProjectController extends Controller
 {
     /**
@@ -23,6 +25,7 @@ class ProjectController extends Controller
     public function create()
     {
         //
+        return view('admin.projects.create');
     }
 
     /**
@@ -30,7 +33,18 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
+        $data = $request->validate([
+            'title' => ['required', 'unique:projects','min:3', 'max:255'],
+            'image' => ['url:https'],
+            'content' => ['required', 'min:10'],
+        ]);
+
+        $data['slug'] = Str::of($data['title'])->slug('-');
+
+        $newProject = Project::create($data);
+
+        return redirect()->route('admin.projects.index');
     }
 
     /**
