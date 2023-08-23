@@ -17,9 +17,14 @@
                     <a href="{{ route('admin.projects.edit', $project->id) }}" class="btn btn-sm btn-success">
                         Edit
                     </a>
-                    <a href="" class="btn btn-sm btn-warning">
-                        Delete
-                    </a>
+                    <form class="d-inline-block" action="{{ route('admin.projects.destroy', $roject ) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+
+                        <button type="submit" class="btn btn-sm btn-warning">
+                            Delete
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
