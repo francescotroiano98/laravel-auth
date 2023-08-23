@@ -7,6 +7,7 @@ use App\Models\Project;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class ProjectController extends Controller
 {
@@ -68,9 +69,19 @@ class ProjectController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Project $project)
     {
         //
+        $data = $request->validate([
+            'title' => ['required', 'min:3', 'max:255', Rule::unique('projects')->ignore($project->id)],
+            'image' => ['url:https'],
+            'content' => ['required', 'min:10'],
+        ]);
+        $data['slug'] = Str::of("$project->id " . $data['title'])->slug('-');
+
+        $project->update($data);
+
+        return redirect()->route('admin.projects.show', compact('project'));
     }
 
     /**
