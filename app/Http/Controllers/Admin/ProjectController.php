@@ -98,13 +98,21 @@ class ProjectController extends Controller
         return view('admin.projects.deleteIndex', compact('projects'));
     }
 
-    public function restore($id){
+    public function restore($slug){
 
-        $project = Project::onlyTrashed()->findOrFail($id);
+        $project = Project::onlyTrashed()->findOrFail($slug);
         
         $project->restore();
 
         return redirect()->route('admin.projects.show', $project);
 
+    }
+    
+    public function obliterate($slug)
+    {
+        $project = Project::onlyTrashed()->findOrFail($slug);
+        $project->forceDelete();
+
+        return redirect()->route('admin.projects.index');
     }
 }

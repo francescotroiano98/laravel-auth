@@ -37,6 +37,14 @@
                                         Restore
                                     </button>
                                 </form>
+                                <form class="d-inline-block" action="{{ route('admin.projects.obliterate', $project) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        Delete permanently
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     @endforeach
