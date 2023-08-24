@@ -36,15 +36,18 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        $img_path = Storage::put('uploads', $request['image']);
         $data = $request->validate([
             'title' => ['required', 'unique:projects','min:3', 'max:255'],
-            'image' => ['file'],
+            'image' => ['image'],
             'content' => ['required', 'min:10'],
         ]);
 
+        if ($request->hasFile('image')){
+            $img_path = Storage::put('uploads/projects', $request['image']);
+            $data['image'] = $img_path;
+        }
         $data['image'] = $img_path;
-        
+
         $data['slug'] = Str::of($data['title'])->slug('-');
 
         $newProject = Project::create($data);
@@ -82,9 +85,16 @@ class ProjectController extends Controller
         //
         $data = $request->validate([
             'title' => ['required', 'min:3', 'max:255', Rule::unique('projects')->ignore($project->id)],
-            'image' => ['url:https'],
+            'image' => ['image'],
             'content' => ['required', 'min:10'],
         ]);
+
+        if ($request->hasFile('image')){
+            Storage::delete($project->image);
+            $img_path = Storage::put('uploads/projects', $request['image']);
+            $data['image'] = $img_path;
+        }
+
         $data['slug'] = Str::of("$project->id " . $data['title'])->slug('-');
 
         $project->update($data);
@@ -119,6 +129,7 @@ class ProjectController extends Controller
     public function obliterate($slug)
     {
         $project = Project::onlyTrashed()->findOrFail($slug);
+        Storage::delete($project->image);
         $project->forceDelete();
 
         return redirect()->route('admin.projects.index');
