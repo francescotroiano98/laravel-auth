@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
+use Illuminate\Support\Facades\Storage;
+
 class ProjectController extends Controller
 {
     /**
@@ -34,18 +36,24 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        
+        $img_path = Storage::put('uploads', $request['image']);
         $data = $request->validate([
             'title' => ['required', 'unique:projects','min:3', 'max:255'],
-            'image' => ['url:https'],
+            'image' => ['file'],
             'content' => ['required', 'min:10'],
         ]);
 
+        $data['image'] = $img_path;
+        
         $data['slug'] = Str::of($data['title'])->slug('-');
 
         $newProject = Project::create($data);
 
-        return redirect()->route('admin.projects.index');
+        $newProject->slug = Str::of("$newProject->id " . $data['title'])->slug('-');
+
+        $newProject->save();
+
+        return redirect()->route('admin.projects.show', $newProject);
     }
 
     /**

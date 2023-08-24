@@ -4,7 +4,7 @@
 <div class="container" id="projects-container">
     <div class="row justify-content-center">
         <div class="col-12">
-            <form action="{{ route('admin.projects.update', $project) }}" method="POST">
+            <form action="{{ route('admin.projects.update', $project) }}" method="POST" enctype="multipart/form-data>
                 @csrf
                 @method('PUT')
 
